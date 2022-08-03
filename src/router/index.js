@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router'
 import ShopLogin from "@/components/ShopLogin";
+import ShopHome from "@/components/ShopHome";
 
 export default new VueRouter({
     routes: [
@@ -7,6 +8,10 @@ export default new VueRouter({
         {
             path: '/login',
             component: ShopLogin
+        },
+        {
+            path: '/home',
+            component: ShopHome
         }
     ]
 })
