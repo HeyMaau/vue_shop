@@ -1,10 +1,16 @@
 <template>
-<h1>首页组件</h1>
+  <el-button type="info" @click="logout">退出</el-button>
 </template>
 
 <script>
 export default {
-  name: "ShopHome"
+  name: "ShopHome",
+  methods: {
+    logout() {
+      sessionStorage.clear()
+      this.$router.push("/login")
+    }
+  }
 }
 </script>
 

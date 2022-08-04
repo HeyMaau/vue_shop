@@ -2,7 +2,7 @@ import VueRouter from 'vue-router'
 import ShopLogin from "@/components/ShopLogin";
 import ShopHome from "@/components/ShopHome";
 
-export default new VueRouter({
+const router = new VueRouter({
     routes: [
         {path: '/', redirect: '/login'},
         {
@@ -15,3 +15,18 @@ export default new VueRouter({
         }
     ]
 })
+
+router.beforeEach((to, from, next) => {
+    if (to.path === "/login") {
+        next();
+    } else {
+        const token = sessionStorage.getItem("token")
+        if (!token) {
+            next("/login")
+        } else {
+            next()
+        }
+    }
+})
+
+export default router
