@@ -1,6 +1,8 @@
 import VueRouter from 'vue-router'
 import ShopLogin from "@/components/ShopLogin";
 import ShopHome from "@/components/ShopHome";
+import ShopWelcome from "@/components/ShopWelcome";
+import ShopUsers from "@/components/user/ShopUsers";
 
 const router = new VueRouter({
     routes: [
@@ -11,7 +13,18 @@ const router = new VueRouter({
         },
         {
             path: '/home',
-            component: ShopHome
+            component: ShopHome,
+            redirect: '/welcome',
+            children: [
+                {
+                    path: '/welcome',
+                    component: ShopWelcome,
+                },
+                {
+                    path: '/users',
+                    component: ShopUsers
+                }
+            ]
         }
     ]
 })

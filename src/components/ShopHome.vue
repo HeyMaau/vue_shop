@@ -14,6 +14,8 @@
         <!--    折叠按钮    -->
         <div class="toggle-button" @click="toggleCollapse">|||</div>
         <el-menu
+            :default-active="activePath"
+            router
             :collapse-transition="false"
             :collapse="isCollapsed"
             unique-opened
@@ -27,13 +29,17 @@
               <span>{{ item.authName }}</span>
             </template>
             <!--     二级导航       -->
-            <el-menu-item :index="subItem.id + ''" v-for="subItem in item.children" :key="subItem.id">
+            <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children" :key="subItem.id"
+                          @click="saveActivePath('/' + subItem.path)">
               <i class="el-icon-menu"></i>
-              <span>{{ subItem.authName }}</span></el-menu-item>
+              <span>{{ subItem.authName }}</span>
+            </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 
@@ -44,6 +50,7 @@ export default {
   name: "ShopHome",
   created() {
     this.getMenuList()
+    this.activePath = sessionStorage.getItem('activePath')
   },
   data() {
     return {
@@ -55,7 +62,8 @@ export default {
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
       },
-      isCollapsed: false
+      isCollapsed: false,
+      activePath: ''
     }
   },
   methods: {
@@ -76,6 +84,10 @@ export default {
     },
     toggleCollapse() {
       this.isCollapsed = !this.isCollapsed
+    },
+    saveActivePath(activePath) {
+      sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
