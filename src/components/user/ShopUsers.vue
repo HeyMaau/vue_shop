@@ -15,8 +15,9 @@
             <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
           </el-input>
         </el-col>
+        <!--    添加用户    -->
         <el-col :span="4">
-          <el-button type="primary">添加用户</el-button>
+          <el-button type="primary" @click="addUserVisible = true">添加用户</el-button>
         </el-col>
       </el-row>
       <!--   表格区域   -->
@@ -71,6 +72,30 @@
           :total="total">
       </el-pagination>
     </el-card>
+    <!--  添加用户对话框  -->
+    <el-dialog
+        title="添加用户"
+        :visible.sync="addUserVisible"
+        width="50%">
+      <el-form :model="addUserForm" :rules="addUserRules" ref="addUserFormRef" label-width="70px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="addUserForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="addUserForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="addUserForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="phone">
+          <el-input v-model="addUserForm.phone"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="addUserVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addUserVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,6 +106,22 @@ export default {
     this.getUserList()
   },
   data() {
+    var checkEmail = (rule, value, callback) => {
+      const regex = /^\w+@[\da-z.-]+\.([a-z]{2,6}|[\u2E80-\u9FFF]{2,3})$/
+      if (regex.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的邮箱地址'))
+      }
+    }
+    var checkPhone = (rule, value, callback) => {
+      const regex = /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/
+      if (regex.test(value)) {
+        callback()
+      } else {
+        callback(new Error('请输入正确的手机号码'))
+      }
+    }
     return {
       queryInfo: {
         query: '',
@@ -88,7 +129,32 @@ export default {
         pagesize: 2
       },
       total: 0,
-      users: []
+      users: [],
+      addUserVisible: false,
+      addUserForm: {
+        username: '',
+        password: '',
+        email: '',
+        phone: ''
+      },
+      addUserRules: {
+        username: [
+          {required: true, message: '请输入用户名', trigger: 'blur'},
+          {min: 3, max: 5, message: '用户名长度在 3 到 5 个字符', trigger: 'blur'}
+        ],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          {min: 6, max: 12, message: '密码长度在 6 到 12 个字符', trigger: 'blur'}
+        ],
+        email: [
+          {required: true, message: '请输入邮箱', trigger: 'blur'},
+          {validator: checkEmail, trigger: 'blur'}
+        ],
+        phone: [
+          {required: true, message: '请输入手机', trigger: 'blur'},
+          {validator: checkPhone, trigger: 'blur'}
+        ]
+      }
     }
   },
   methods: {
