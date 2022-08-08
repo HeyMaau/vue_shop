@@ -4,6 +4,7 @@ import ShopHome from "@/components/ShopHome";
 import ShopWelcome from "@/components/ShopWelcome";
 import ShopUsers from "@/components/user/ShopUsers";
 import ShopRights from "@/components/power/ShopRights";
+import ShopRoles from "@/components/power/ShopRoles";
 
 const router = new VueRouter({
     routes: [
@@ -28,6 +29,10 @@ const router = new VueRouter({
                 {
                     path: '/rights',
                     component: ShopRights
+                },
+                {
+                    path: '/roles',
+                    component: ShopRoles
                 }
             ]
         }
