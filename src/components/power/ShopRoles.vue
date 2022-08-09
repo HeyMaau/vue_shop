@@ -19,8 +19,34 @@
           :data="roleList"
           border
           stripe>
+        <!--    折叠行    -->
         <el-table-column
             type="expand">
+          <template slot-scope="scope">
+            <!--     一级权限       -->
+            <el-row v-for="(item1, index1) in scope.row.children" :key="item1.id"
+                    :class="['bdbottom' ,index1 === 0 ? 'bdtop' : '', 'vcenter', 'expandpadding']">
+              <el-col :span="5">
+                <el-tag>{{ item1.authName }}</el-tag>
+                <i class="el-icon-caret-right"></i>
+              </el-col>
+              <el-col :span="19">
+                <!--        二级权限        -->
+                <el-row v-for="(item2, index2) in item1.children" :key="item2.id"
+                        :class="[index2 === 0 ? '' : 'bdtop', 'vcenter']">
+                  <el-col :span="6">
+                    <el-tag type="success">{{ item2.authName }}</el-tag>
+                    <i class="el-icon-caret-right"></i>
+                  </el-col>
+                  <!--        三级权限          -->
+                  <el-col :span="18">
+                    <el-tag type="warning" v-for="item3 in item2.children" :key="item3.id">{{ item3.authName }}
+                    </el-tag>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </template>
         </el-table-column>
         <el-table-column
             type="index" label="#">
@@ -111,7 +137,6 @@ export default {
       },
       editRoleDialogVisible: false,
       editRoleForm: {},
-
     }
   },
   methods: {
@@ -199,4 +224,25 @@ export default {
 
 <style lang="less" scoped>
 
+.el-tag {
+  margin: 7px
+}
+
+.bdtop {
+  border-top: 1px solid #eee;
+}
+
+.bdbottom {
+  border-bottom: 1px solid #eee;
+}
+
+.vcenter {
+  display: flex;
+  align-items: center;
+}
+
+.expandpadding {
+  padding-left: 40px;
+  padding-right: 40px;
+}
 </style>
