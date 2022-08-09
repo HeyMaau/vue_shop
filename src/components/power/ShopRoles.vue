@@ -27,7 +27,7 @@
             <el-row v-for="(item1, index1) in scope.row.children" :key="item1.id"
                     :class="['bdbottom' ,index1 === 0 ? 'bdtop' : '', 'vcenter', 'expandpadding']">
               <el-col :span="5">
-                <el-tag>{{ item1.authName }}</el-tag>
+                <el-tag closable @close="removeRightById(scope.row, item1.id)">{{ item1.authName }}</el-tag>
                 <i class="el-icon-caret-right"></i>
               </el-col>
               <el-col :span="19">
@@ -35,12 +35,14 @@
                 <el-row v-for="(item2, index2) in item1.children" :key="item2.id"
                         :class="[index2 === 0 ? '' : 'bdtop', 'vcenter']">
                   <el-col :span="6">
-                    <el-tag type="success">{{ item2.authName }}</el-tag>
+                    <el-tag type="success" closable @close="removeRightById(scope.row, item2.id)">{{ item2.authName }}
+                    </el-tag>
                     <i class="el-icon-caret-right"></i>
                   </el-col>
                   <!--        三级权限          -->
                   <el-col :span="18">
-                    <el-tag type="warning" v-for="item3 in item2.children" :key="item3.id">{{ item3.authName }}
+                    <el-tag type="warning" v-for="item3 in item2.children" :key="item3.id" closable
+                            @close="removeRightById(scope.row, item3.id)">{{ item3.authName }}
                     </el-tag>
                   </el-col>
                 </el-row>
@@ -66,7 +68,8 @@
             </el-button>
             <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeRoleById(scope.row.id)">删除
             </el-button>
-            <el-button type="warning" icon="el-icon-setting" size="mini">分配权限</el-button>
+            <el-button type="warning" icon="el-icon-setting" size="mini" @click="showRightsSettingDialog">分配权限
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,6 +113,17 @@
     <el-button type="primary" @click="editRole">确 定</el-button>
   </span>
     </el-dialog>
+    <!--  分配权限对话框  -->
+    <el-dialog
+        title="分配权限"
+        :visible.sync="rightsSettingDialogVisible"
+        width="50%">
+      <el-tree :data="rightList" :props="rightListProps" show-checkbox default-expand-all node-key="id"></el-tree>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="rightsSettingDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="rightsSettingDialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -137,6 +151,12 @@ export default {
       },
       editRoleDialogVisible: false,
       editRoleForm: {},
+      rightsSettingDialogVisible: false,
+      rightList: [],
+      rightListProps: {
+        children: 'children',
+        label: 'authName'
+      }
     }
   },
   methods: {
@@ -217,6 +237,37 @@ export default {
           }
         }
       })
+    },
+    removeRightById(role, rightId) {
+      this.$confirm('此操作将永久删除该权限, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const {data: response} = await this.$http.delete(`roles/${role.id}/rights/${rightId}`)
+        console.log(response)
+        if (response.meta.status !== 200) {
+          this.$message.error('删除权限失败！')
+        } else {
+          this.$message.success('删除权限成功！')
+          role.children = response.data
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除用户'
+        })
+      })
+    },
+    async showRightsSettingDialog() {
+      const {data: response} = await this.$http.get('rights/tree')
+      console.log(response)
+      if (response.meta.status !== 200) {
+        this.$message.error('获取权限列表失败！')
+      } else {
+        this.rightsSettingDialogVisible = true
+        this.rightList = response.data
+      }
     }
   }
 }

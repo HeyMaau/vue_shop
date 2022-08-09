@@ -26,7 +26,8 @@ import {
     Pagination,
     Dialog,
     MessageBox,
-    Tag
+    Tag,
+    Tree
 } from "element-ui";
 
 Vue.prototype.$message = Message
@@ -55,3 +56,4 @@ Vue.component(Tooltip.name, Tooltip)
 Vue.component(Pagination.name, Pagination)
 Vue.component(Dialog.name, Dialog)
 Vue.component(Tag.name, Tag)
+Vue.component(Tree.name, Tree)
