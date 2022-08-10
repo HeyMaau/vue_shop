@@ -27,7 +27,9 @@ import {
     Dialog,
     MessageBox,
     Tag,
-    Tree
+    Tree,
+    Select,
+    Option
 } from "element-ui";
 
 Vue.prototype.$message = Message
@@ -57,3 +59,5 @@ Vue.component(Pagination.name, Pagination)
 Vue.component(Dialog.name, Dialog)
 Vue.component(Tag.name, Tag)
 Vue.component(Tree.name, Tree)
+Vue.component(Select.name, Select)
+Vue.component(Option.name, Option)
