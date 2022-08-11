@@ -29,11 +29,13 @@ import {
     Tag,
     Tree,
     Select,
-    Option
+    Option,
+    Cascader
 } from "element-ui";
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
+Vue.component(Cascader.name, Cascader)
 Vue.component(Button.name, Button)
 Vue.component(Form.name, Form)
 Vue.component(Input.name, Input)
