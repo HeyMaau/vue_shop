@@ -30,11 +30,17 @@ import {
     Tree,
     Select,
     Option,
-    Cascader
+    Cascader,
+    Alert,
+    Tabs,
+    TabPane
 } from "element-ui";
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
+Vue.component(Tabs.name, Tabs)
+Vue.component(TabPane.name, TabPane)
+Vue.component(Alert.name, Alert)
 Vue.component(Cascader.name, Cascader)
 Vue.component(Button.name, Button)
 Vue.component(Form.name, Form)

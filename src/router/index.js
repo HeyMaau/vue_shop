@@ -6,6 +6,7 @@ import ShopUsers from "@/components/user/ShopUsers";
 import ShopRights from "@/components/power/ShopRights";
 import ShopRoles from "@/components/power/ShopRoles";
 import ShopCategory from "@/components/goods/ShopCategory";
+import ShopCategoryParams from "@/components/goods/ShopCategoryParams";
 
 const router = new VueRouter({
     routes: [
@@ -38,6 +39,10 @@ const router = new VueRouter({
                 {
                     path: '/categories',
                     component: ShopCategory
+                },
+                {
+                    path: '/params',
+                    component: ShopCategoryParams
                 }
             ]
         }
