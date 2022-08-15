@@ -32,7 +32,7 @@
         <el-tab-pane label="动态参数" name="many">
           <div v-if="activeTabName === 'many'">
             <!--     添加参数按钮     -->
-            <el-button type="primary" :disabled="btnClickable">添加参数</el-button>
+            <el-button type="primary" :disabled="btnClickable" @click="addParamsDialogVisible = true">添加参数</el-button>
             <!--     表格区域     -->
             <el-table
                 :data="categoryParamList"
@@ -63,7 +63,7 @@
         <el-tab-pane label="静态属性" name="only">
           <div v-if="activeTabName === 'only'">
             <!--     添加属性按钮     -->
-            <el-button type="primary" :disabled="btnClickable">添加属性</el-button>
+            <el-button type="primary" :disabled="btnClickable" @click="addParamsDialogVisible = true">添加属性</el-button>
             <!--     表格区域     -->
             <el-table
                 :data="categoryParamList"
@@ -92,6 +92,22 @@
         </el-tab-pane>
       </el-tabs>
     </el-card>
+    <!--  添加参数对话框  -->
+    <el-dialog
+        :title="'添加' + addParamsDialogTitle"
+        :visible.sync="addParamsDialogVisible"
+        width="50%"
+        @close="addParamsDialogClose">
+      <el-form :model="addParamsForm" :rules="addParamsFormRules" ref="addParamsFormRef" label-width="100px">
+        <el-form-item :label="addParamsDialogTitle" prop="attr_name">
+          <el-input v-model="addParamsForm.attr_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="addParamsDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addParams">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -112,7 +128,16 @@ export default {
       },
       selectedCategoryKeys: [],
       activeTabName: 'many',
-      categoryParamList: []
+      categoryParamList: [],
+      addParamsDialogVisible: false,
+      addParamsForm: {
+        attr_name: ''
+      },
+      addParamsFormRules: {
+        attr_name: [
+          {required: true, message: '请输入参数名称', trigger: 'blur'},
+        ]
+      }
     }
   },
   methods: {
@@ -153,6 +178,27 @@ export default {
       } else {
         this.categoryParamList = response.data
       }
+    },
+    addParamsDialogClose() {
+      this.$refs.addParamsFormRef.resetFields()
+    },
+    addParams() {
+      this.$refs.addParamsFormRef.validate(async valid => {
+        if (valid) {
+          const {data: response} = await this.$http.post(`categories/${this.categoryId}/attributes`, {
+            attr_name: this.addParamsForm.attr_name,
+            attr_sel: this.activeTabName
+          })
+          console.log(response)
+          if (response.meta.status !== 201) {
+            this.$message.error('添加参数失败！')
+          } else {
+            this.$message.success('添加参数成功！')
+            this.addParamsDialogVisible = false
+            this.getCategoryParamList()
+          }
+        }
+      })
     }
   },
   computed: {
@@ -167,6 +213,12 @@ export default {
     categoryId() {
       //都只获取三级分类的ID
       return this.selectedCategoryKeys[2]
+    },
+    addParamsDialogTitle() {
+      if (this.activeTabName === 'only') {
+        return '静态属性'
+      }
+      return '动态参数'
     }
   }
 }
