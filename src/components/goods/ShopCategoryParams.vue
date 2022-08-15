@@ -30,51 +30,65 @@
       <el-tabs v-model="activeTabName" @tab-click="handleTabClick">
         <!--    动态参数    -->
         <el-tab-pane label="动态参数" name="many">
-          <!--     添加参数按钮     -->
-          <el-button type="primary" :disabled="btnClickable">添加参数</el-button>
-          <!--     表格区域     -->
-          <el-table
-              :data="categoryParamList"
-              border
-              stripe>
-            <el-table-column
-                type="index"
-                label="#">
-            </el-table-column>
-            <el-table-column
-                prop="attr_name"
-                label="参数名称">
-            </el-table-column>
-            <el-table-column
-                label="操作">
-              <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-              <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
-            </el-table-column>
-          </el-table>
+          <div v-if="activeTabName === 'many'">
+            <!--     添加参数按钮     -->
+            <el-button type="primary" :disabled="btnClickable">添加参数</el-button>
+            <!--     表格区域     -->
+            <el-table
+                :data="categoryParamList"
+                border
+                stripe
+                style="width: 100%">
+              <!--      展开列      -->
+              <el-table-column
+                  type="expand">
+              </el-table-column>
+              <el-table-column
+                  type="index"
+                  label="#">
+              </el-table-column>
+              <el-table-column
+                  prop="attr_name"
+                  label="参数名称">
+              </el-table-column>
+              <el-table-column
+                  label="操作">
+                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+              </el-table-column>
+            </el-table>
+          </div>
         </el-tab-pane>
         <!--    静态属性    -->
         <el-tab-pane label="静态属性" name="only">
-          <!--     添加属性按钮     -->
-          <el-button type="primary" :disabled="btnClickable">添加属性</el-button>
-          <!--     表格区域     -->
-          <el-table
-              :data="categoryParamList"
-              stripe
-              border>
-            <el-table-column
-                type="index"
-                label="#">
-            </el-table-column>
-            <el-table-column
-                prop="attr_name"
-                label="属性名称">
-            </el-table-column>
-            <el-table-column
-                label="操作">
-              <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-              <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
-            </el-table-column>
-          </el-table>
+          <div v-if="activeTabName === 'only'">
+            <!--     添加属性按钮     -->
+            <el-button type="primary" :disabled="btnClickable">添加属性</el-button>
+            <!--     表格区域     -->
+            <el-table
+                :data="categoryParamList"
+                stripe
+                border
+                style="width: 100%">
+              <!--      展开列      -->
+              <el-table-column
+                  type="expand">
+              </el-table-column>
+              <el-table-column
+                  type="index"
+                  label="#">
+              </el-table-column>
+              <el-table-column
+                  prop="attr_name"
+                  label="属性名称">
+              </el-table-column>
+              <el-table-column
+                  label="操作">
+                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+              </el-table-column>
+            </el-table>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -115,6 +129,7 @@ export default {
       //只允许选中三级分类，因此数组长度不等于3时，直接将数组清空
       if (selectedKeys.length !== 3) {
         this.selectedCategoryKeys = []
+        this.categoryParamList = []
         return
       }
       this.getCategoryParamList()
