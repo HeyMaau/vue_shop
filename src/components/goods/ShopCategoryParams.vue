@@ -53,8 +53,12 @@
               </el-table-column>
               <el-table-column
                   label="操作">
-                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-                <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                <template slot-scope="scope">
+                  <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditParamsDialog(scope.row)">
+                    编辑
+                  </el-button>
+                  <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -84,8 +88,12 @@
               </el-table-column>
               <el-table-column
                   label="操作">
-                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-                <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                <template slot-scope="scope">
+                  <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditParamsDialog(scope.row)">
+                    编辑
+                  </el-button>
+                  <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -106,6 +114,22 @@
       <span slot="footer" class="dialog-footer">
     <el-button @click="addParamsDialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="addParams">确 定</el-button>
+  </span>
+    </el-dialog>
+    <!--  修改参数对话框  -->
+    <!--  与添加参数共用标题计算属性、表单校验规则  -->
+    <el-dialog
+        :title="'修改' + addParamsDialogTitle"
+        :visible.sync="editParamsDialogVisible"
+        width="50%">
+      <el-form :model="editParamsForm" :rules="addParamsFormRules" ref="editParamsFormRef" label-width="100px">
+        <el-form-item :label="addParamsDialogTitle" prop="attr_name">
+          <el-input v-model="editParamsForm.attr_name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="editParamsDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="editParams">确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -137,6 +161,12 @@ export default {
         attr_name: [
           {required: true, message: '请输入参数名称', trigger: 'blur'},
         ]
+      },
+      editParamsDialogVisible: false,
+      editParamsForm: {
+        attr_name: '',
+        cat_id: 0,
+        attr_id: 0
       }
     }
   },
@@ -195,6 +225,31 @@ export default {
           } else {
             this.$message.success('添加参数成功！')
             this.addParamsDialogVisible = false
+            this.getCategoryParamList()
+          }
+        }
+      })
+    },
+    showEditParamsDialog(paramInfo) {
+      this.editParamsDialogVisible = true
+      this.editParamsForm.attr_name = paramInfo.attr_name
+      this.editParamsForm.cat_id = paramInfo.cat_id
+      this.editParamsForm.attr_id = paramInfo.attr_id
+      console.log(paramInfo)
+    },
+    editParams() {
+      this.$refs.editParamsFormRef.validate(async valid => {
+        if (valid) {
+          const {data: response} = await this.$http.put(`categories/${this.editParamsForm.cat_id}/attributes/${this.editParamsForm.attr_id}`, {
+            attr_name: this.editParamsForm.attr_name,
+            attr_sel: this.activeTabName
+          })
+          console.log(response)
+          if (response.meta.status !== 200) {
+            this.$message.error('修改参数失败！')
+          } else {
+            this.$message.success('修改参数成功！')
+            this.editParamsDialogVisible = false
             this.getCategoryParamList()
           }
         }
