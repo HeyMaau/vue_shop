@@ -121,6 +121,7 @@ export default {
       console.log(selectedKeys)
     },
     handleTabClick() {
+      this.categoryParamList = []
       if (this.selectedCategoryKeys.length === 3) {
         this.getCategoryParamList()
       }
