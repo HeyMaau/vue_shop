@@ -42,6 +42,25 @@
               <!--      展开列      -->
               <el-table-column
                   type="expand">
+                <template slot-scope="scope">
+                  <div class="expand-padding">
+                    <el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index">{{ item }}</el-tag>
+                    <!--          新建Tag输入框          -->
+                    <el-input
+                        class="input-new-tag"
+                        v-if="scope.row.inputParamVisible"
+                        v-model="scope.row.inputParamValue"
+                        ref="saveTagInput"
+                        size="small"
+                        @keyup.enter.native="handleInputParamConfirm(scope.row)"
+                        @blur="handleInputParamConfirm(scope.row)"
+                    >
+                    </el-input>
+                    <!--         新建Tag按钮           -->
+                    <el-button v-else class="button-new-tag" size="small" @click="showInputParam(scope.row)">+ New Tag
+                    </el-button>
+                  </div>
+                </template>
               </el-table-column>
               <el-table-column
                   type="index"
@@ -78,6 +97,26 @@
               <!--      展开列      -->
               <el-table-column
                   type="expand">
+                <template slot-scope="scope">
+                  <div class="expand-padding">
+                    <!--          Tag标签          -->
+                    <el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index">{{ item }}</el-tag>
+                    <!--          新建Tag输入框          -->
+                    <el-input
+                        class="input-new-tag"
+                        v-if="scope.row.inputParamVisible"
+                        v-model="scope.row.inputParamValue"
+                        ref="saveTagInput"
+                        size="small"
+                        @keyup.enter.native="handleInputParamConfirm(scope.row)"
+                        @blur="handleInputParamConfirm(scope.row)"
+                    >
+                    </el-input>
+                    <!--         新建Tag按钮           -->
+                    <el-button v-else class="button-new-tag" size="small" @click="showInputParam(scope.row)">+ New Tag
+                    </el-button>
+                  </div>
+                </template>
               </el-table-column>
               <el-table-column
                   type="index"
@@ -169,7 +208,7 @@ export default {
         attr_name: '',
         cat_id: 0,
         attr_id: 0
-      }
+      },
     }
   },
   methods: {
@@ -208,6 +247,11 @@ export default {
       if (response.meta.status !== 200) {
         this.$message.error('获取分类参数失败！')
       } else {
+        response.data.forEach(item => {
+          item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : []
+          item.inputParamVisible = false
+          item.inputParamValue = ''
+        })
         this.categoryParamList = response.data
       }
     },
@@ -274,6 +318,18 @@ export default {
       }).catch(() => {
         this.$message.info('已取消删除')
       });
+    },
+    handleInputParamConfirm(param) {
+      param.inputParamVisible = false;
+      param.inputParamValue = '';
+    },
+    showInputParam(param) {
+      console.log(param)
+      param.inputParamVisible = true;
+      // eslint-disable-next-line no-unused-vars
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
     }
   },
   computed: {
@@ -303,5 +359,23 @@ export default {
 .category-cascader {
   margin-top: 15px;
   margin-bottom: 15px;
+}
+
+.el-tag {
+  margin: 10px
+}
+
+.expand-padding {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.button-new-tag {
+  margin-left: 10px
+}
+
+.input-new-tag {
+  width: 150px;
+  margin-left: 10px
 }
 </style>
