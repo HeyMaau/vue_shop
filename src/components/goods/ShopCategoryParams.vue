@@ -44,7 +44,9 @@
                   type="expand">
                 <template slot-scope="scope">
                   <div class="expand-padding">
-                    <el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index">{{ item }}</el-tag>
+                    <el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index"
+                            @close="handleTagClose(scope.row, index)">{{ item }}
+                    </el-tag>
                     <!--          新建Tag输入框          -->
                     <el-input
                         class="input-new-tag"
@@ -99,8 +101,9 @@
                   type="expand">
                 <template slot-scope="scope">
                   <div class="expand-padding">
-                    <!--          Tag标签          -->
-                    <el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index">{{ item }}</el-tag>
+                    <el-tag closable v-for="(item, index) in scope.row.attr_vals" :key="index"
+                            @close="handleTagClose(scope.row, index)">{{ item }}
+                    </el-tag>
                     <!--          新建Tag输入框          -->
                     <el-input
                         class="input-new-tag"
@@ -319,17 +322,38 @@ export default {
         this.$message.info('已取消删除')
       });
     },
+    async saveAttrVals(param) {
+      const {data: response} = await this.$http.put(`categories/${param.cat_id}/attributes/${param.attr_id}`, {
+        attr_name: param.attr_name,
+        attr_sel: param.attr_sel,
+        attr_vals: param.attr_vals.join(',')
+      })
+      console.log(response)
+      if (response.meta.status !== 200) {
+        this.$message.error('修改参数项失败！')
+      } else {
+        this.$message.success('修改参数项成功！')
+      }
+    },
     handleInputParamConfirm(param) {
-      param.inputParamVisible = false;
-      param.inputParamValue = '';
+      //空串则不做处理
+      if (param.inputParamValue.trim().length !== 0) {
+        param.attr_vals.push(param.inputParamValue.trim())
+        this.saveAttrVals(param)
+      }
+      param.inputParamVisible = false
+      param.inputParamValue = ''
     },
     showInputParam(param) {
-      console.log(param)
       param.inputParamVisible = true;
       // eslint-disable-next-line no-unused-vars
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
+    },
+    handleTagClose(param, index) {
+      param.attr_vals.splice(index, 1)
+      this.saveAttrVals(param)
     }
   },
   computed: {
