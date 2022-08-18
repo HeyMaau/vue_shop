@@ -33,11 +33,15 @@ import {
     Cascader,
     Alert,
     Tabs,
-    TabPane
+    TabPane,
+    Steps,
+    Step
 } from "element-ui";
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
+Vue.component(Steps.name, Steps)
+Vue.component(Step.name, Step)
 Vue.component(Tabs.name, Tabs)
 Vue.component(TabPane.name, TabPane)
 Vue.component(Alert.name, Alert)
