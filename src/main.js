@@ -13,6 +13,7 @@ import './plugins/element'
 import axios from "axios";
 //引入第三方树形table组件
 import ZkTable from 'vue-table-with-tree-grid'
+
 Vue.component(ZkTable.name, ZkTable)
 
 axios.defaults.baseURL = "http://127.0.0.1:8888/api/private/v1/"
@@ -26,8 +27,16 @@ Vue.config.productionTip = false
 
 Vue.use(VueRouter)
 
-/*Vue.use(Button)
-Vue.use(Form)*/
+Vue.filter('dataFormater', function (time) {
+    const dateFormater = new Date(time)
+    const year = dateFormater.getFullYear()
+    const month = (dateFormater.getMonth() + 1 + '').padStart(2, '0')
+    const day = (dateFormater.getDay() + '').padStart(2, '0')
+    const hour = (dateFormater.getHours() + '').padStart(2, '0')
+    const min = (dateFormater.getMinutes() + '').padStart(2, '0')
+    const sec = (dateFormater.getSeconds() + '').padStart(2, '0')
+    return `${year}-${month}-${day} ${hour}-${min}-${sec}`
+})
 
 new Vue({
     render: h => h(App),
