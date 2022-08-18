@@ -51,8 +51,10 @@
         <el-table-column
             label="操作"
             min-width="10">
-          <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-          <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+          <template slot-scope="scope">
+            <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeGoodsById(scope.row)"></el-button>
+          </template>
         </el-table-column>
       </el-table>
       <!--   分页   -->
@@ -107,6 +109,27 @@ export default {
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
       this.getGoodsList()
+    },
+    removeGoodsById(goodsInfo) {
+      this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const {data: response} = await this.$http.delete('goods/' + goodsInfo.goods_id)
+        console.log(response)
+        if (response.meta.status !== 200) {
+          this.$message.error('删除商品失败！')
+        } else {
+          this.$message.success('删除商品成功！')
+          this.getGoodsList()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     }
   }
 }
