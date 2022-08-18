@@ -35,11 +35,15 @@ import {
     Tabs,
     TabPane,
     Steps,
-    Step
+    Step,
+    CheckboxGroup,
+    Checkbox
 } from "element-ui";
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
+Vue.component(CheckboxGroup.name, CheckboxGroup)
+Vue.component(Checkbox.name, Checkbox)
 Vue.component(Steps.name, Steps)
 Vue.component(Step.name, Step)
 Vue.component(Tabs.name, Tabs)
