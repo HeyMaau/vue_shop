@@ -58,7 +58,11 @@
               </el-checkbox-group>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+          <el-tab-pane label="商品属性" name="2">
+            <el-form-item :label="item.attr_name" v-for="item in onlyAttrList" :key="item.attr_id">
+              <el-input v-model="item.attr_vals"></el-input>
+            </el-form-item>
+          </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
           <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
         </el-tabs>
@@ -107,10 +111,15 @@ export default {
         label: 'cat_name',
         children: 'children'
       },
-      manyParamList: []
+      manyParamList: [],
+      onlyAttrList: []
     }
   },
   methods: {
+    /**
+     * 获取分类数据
+     * @returns {Promise<void>}
+     */
     async getCategoryList() {
       const {data: response} = await this.$http.get('categories')
       console.log(response)
@@ -120,7 +129,12 @@ export default {
         this.categoryList = response.data
       }
     },
-    async getGoodsAttrs() {
+
+    /**
+     * 获取商品动态参数
+     * @returns {Promise<void>}
+     */
+    async getGoodsManyParams() {
       const {data: response} = await this.$http.get(`categories/${this.categoryId}/attributes`, {
         params: {
           sel: 'many'
@@ -128,7 +142,7 @@ export default {
       })
       console.log(response)
       if (response.meta.status !== 200) {
-        this.$message.error('获取商品属性数据失败！')
+        this.$message.error('获取商品参数数据失败！')
       } else {
         response.data.forEach(item => {
           item.attr_vals = item.attr_vals.split(' ')
@@ -136,6 +150,24 @@ export default {
         this.manyParamList = response.data
       }
     },
+
+    /**
+     * 获取商品静态属性
+     */
+    async getGoodsOnlyAttrs() {
+      const {data: response} = await this.$http.get(`categories/${this.categoryId}/attributes`, {
+        params: {
+          sel: 'only'
+        }
+      })
+      console.log(response)
+      if (response.meta.status !== 200) {
+        this.$message.error('获取商品属性数据失败！')
+      } else {
+        this.onlyAttrList = response.data
+      }
+    },
+
     handleCascaderChange() {
       if (this.addGoodsForm.goods_cat.length !== 3) {
         this.addGoodsForm.goods_cat = []
@@ -149,7 +181,9 @@ export default {
     },
     handleTabClick() {
       if (this.activeStep === '1') {
-        this.getGoodsAttrs()
+        this.getGoodsManyParams()
+      } else if (this.activeStep === '2') {
+        this.getGoodsOnlyAttrs()
       }
     }
   },
