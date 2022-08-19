@@ -13,8 +13,13 @@ import './plugins/element'
 import axios from "axios";
 //引入第三方树形table组件
 import ZkTable from 'vue-table-with-tree-grid'
-
 Vue.component(ZkTable.name, ZkTable)
+//引入富文本编辑器Quill
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css' // import styles
+import 'quill/dist/quill.snow.css' // for snow theme
+import 'quill/dist/quill.bubble.css' // for bubble theme
+Vue.use(VueQuillEditor, /* { default global options } */)
 
 axios.defaults.baseURL = "http://127.0.0.1:8888/api/private/v1/"
 axios.interceptors.request.use(config => {
