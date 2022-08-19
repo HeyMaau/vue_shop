@@ -131,7 +131,7 @@ export default {
         this.$message.error('获取商品属性数据失败！')
       } else {
         response.data.forEach(item => {
-          item.attr_vals = item.attr_vals.split(',')
+          item.attr_vals = item.attr_vals.split(' ')
         })
         this.manyParamList = response.data
       }
@@ -164,6 +164,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+.el-checkbox {
+  margin: 0 10px 0 0 !important;
+}
 </style>

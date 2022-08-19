@@ -251,7 +251,7 @@ export default {
         this.$message.error('获取分类参数失败！')
       } else {
         response.data.forEach(item => {
-          item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : []
+          item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
           item.inputParamVisible = false
           item.inputParamValue = ''
         })
@@ -326,7 +326,7 @@ export default {
       const {data: response} = await this.$http.put(`categories/${param.cat_id}/attributes/${param.attr_id}`, {
         attr_name: param.attr_name,
         attr_sel: param.attr_sel,
-        attr_vals: param.attr_vals.join(',')
+        attr_vals: param.attr_vals.join(' ')
       })
       console.log(response)
       if (response.meta.status !== 200) {
