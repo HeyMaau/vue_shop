@@ -63,11 +63,28 @@
               <el-input v-model="item.attr_vals"></el-input>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">
+            <el-upload
+                :action="uploadPicUrl"
+                :headers="httpHeader"
+                :on-success="onPicUploadSuccess"
+                :on-preview="handlePicPreview"
+                :on-remove="handlePicRemove"
+                list-type="picture">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
+    <!--  上传图片预览  -->
+    <el-dialog
+        title="图片预览"
+        :visible.sync="previewPicDialogVisible"
+        width="50%">
+      <img :src="previewPicUrl" class="preview-img">
+    </el-dialog>
   </div>
 </template>
 
@@ -85,7 +102,8 @@ export default {
         goods_cat: [],
         goods_price: 0,
         goods_number: 0,
-        goods_weight: 0
+        goods_weight: 0,
+        pics: []
       },
       addGoodsFormRules: {
         goods_name: [
@@ -112,7 +130,13 @@ export default {
         children: 'children'
       },
       manyParamList: [],
-      onlyAttrList: []
+      onlyAttrList: [],
+      uploadPicUrl: 'http://127.0.0.1:8888/api/private/v1/upload',
+      httpHeader: {
+        Authorization: sessionStorage.getItem('token')
+      },
+      previewPicDialogVisible: false,
+      previewPicUrl: ''
     }
   },
   methods: {
@@ -185,6 +209,30 @@ export default {
       } else if (this.activeStep === '2') {
         this.getGoodsOnlyAttrs()
       }
+    },
+    handlePicPreview(file) {
+      console.log(file)
+      this.previewPicDialogVisible = true
+      this.previewPicUrl = file.response.data.url
+    },
+    handlePicRemove(file) {
+      const picPath = file.response.data.tmp_path
+      const index = this.addGoodsForm.pics.findIndex(value => {
+        return value.pic === picPath
+      });
+      this.addGoodsForm.pics.splice(index, 1)
+    },
+    onPicUploadSuccess(response) {
+      console.log(response)
+      if (response.meta.status !== 200) {
+        this.$message.error('上传商品图片失败！')
+      } else {
+        this.$message.success('上传商品图片成功！')
+        const picInfo = {
+          'pic': response.data.tmp_path
+        }
+        this.addGoodsForm.pics.push(picInfo)
+      }
     }
   },
   computed: {
@@ -201,5 +249,9 @@ export default {
 <style lang="less" scoped>
 .el-checkbox {
   margin: 0 10px 0 0 !important;
+}
+
+.preview-img {
+  width: 100%;
 }
 </style>
