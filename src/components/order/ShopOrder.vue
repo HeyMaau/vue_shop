@@ -50,16 +50,49 @@
         <el-table-column
             label="操作">
           <template>
-            <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+            <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditAddressDialog"></el-button>
             <el-button type="success" icon="el-icon-location" size="mini"></el-button>
           </template>
         </el-table-column>
       </el-table>
+      <!--分页-->
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="queryInfo.pagenum"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="queryInfo.pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+      </el-pagination>
     </el-card>
+    <!--  修改地址对话框  -->
+    <el-dialog
+        title="修改地址"
+        :visible.sync="editAddressDialogVisible"
+        width="50%">
+      <el-form :model="editAddressForm" :rules="editAddressFormRules" ref="editAddressFormRef" label-width="100px">
+        <el-form-item label="省市区/县" prop="district">
+          <el-cascader
+              v-model="editAddressForm.district"
+              :options="citydata"
+              :props="{ expandTrigger: 'hover' }"></el-cascader>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address">
+          <el-input v-model="editAddressForm.address"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="editAddressDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="editAddressDialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import citydata from "@/components/order/citydata";
+
 export default {
   name: "ShopOrder",
   created() {
@@ -73,7 +106,21 @@ export default {
         pagesize: 10
       },
       orderList: [],
-      total: 0
+      total: 0,
+      editAddressDialogVisible: false,
+      editAddressForm: {
+        district: [],
+        address: ''
+      },
+      editAddressFormRules: {
+        district: [
+          {required: true, message: '请选择省市区/县', trigger: 'blur'},
+        ],
+        address: [
+          {required: true, message: '请输入详细地址', trigger: 'blur'},
+        ]
+      },
+      citydata
     }
   },
   methods: {
@@ -88,11 +135,24 @@ export default {
         this.orderList = response.data.goods
         this.total = response.data.total
       }
+    },
+    handleSizeChange(newPageSize) {
+      this.queryInfo.pagesize = newPageSize
+      this.getOrderList()
+    },
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getOrderList()
+    },
+    showEditAddressDialog() {
+      this.editAddressDialogVisible = true
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+.el-cascader {
+  width: 100%;
+}
 </style>
