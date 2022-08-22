@@ -7,7 +7,7 @@
       <el-breadcrumb-item>订单列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!--  卡片区域  -->
-    <el-card class="box-card">
+    <el-card>
       <!--   搜索框   -->
       <el-row>
         <el-col :span="8">

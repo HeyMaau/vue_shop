@@ -10,6 +10,7 @@ import ShopCategoryParams from "@/components/goods/ShopCategoryParams";
 import ShopGoodsList from "@/components/goods/ShopGoodsList";
 import ShopGoodsAdd from "@/components/goods/ShopGoodsAdd";
 import ShopOrder from "@/components/order/ShopOrder";
+import ShopReport from "@/components/report/ShopReport";
 
 const router = new VueRouter({
     routes: [
@@ -58,6 +59,10 @@ const router = new VueRouter({
                 {
                     path: '/orders',
                     component: ShopOrder
+                },
+                {
+                    path: '/reports',
+                    component: ShopReport
                 }
             ]
         }
