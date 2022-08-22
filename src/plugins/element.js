@@ -38,11 +38,15 @@ import {
     Step,
     CheckboxGroup,
     Checkbox,
-    Upload
+    Upload,
+    Timeline,
+    TimelineItem
 } from "element-ui";
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
+Vue.component(Timeline.name, Timeline)
+Vue.component(TimelineItem.name, TimelineItem)
 Vue.component(Upload.name, Upload)
 Vue.component(CheckboxGroup.name, CheckboxGroup)
 Vue.component(Checkbox.name, Checkbox)
