@@ -77,7 +77,7 @@
           <el-tab-pane label="商品内容" name="4">
             <!--      富文本编辑器      -->
             <quill-editor v-model="addGoodsForm.goods_introduce"/>
-            <el-button type="primary" class="btn-add-goods">添加商品</el-button>
+            <el-button type="primary" class="btn-add-goods" @click="addGoods">添加商品</el-button>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -93,14 +93,27 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: "ShopGoodsAdd",
   created() {
     this.getCategoryList()
   },
   data() {
+    //用于校验添加商品中需要输入数字的表单
+    let checkNumber = (rule, value, callback) => {
+      if (value <= 0) {
+        return callback(new Error('价格不能为空'));
+      }
+      callback()
+    }
     return {
       activeStep: '0',
+      //是否进入了商品参数
+      isEnterStep1: false,
+      //是否进入了商品属性
+      isEnterStep2: false,
       addGoodsForm: {
         goods_name: '',
         goods_cat: [],
@@ -116,12 +129,15 @@ export default {
         ],
         goods_price: [
           {required: true, message: '请输入商品价格', trigger: 'blur'},
+          {validator: checkNumber, trigger: 'blur'}
         ],
         goods_weight: [
           {required: true, message: '请输入商品重量', trigger: 'blur'},
+          {validator: checkNumber, trigger: 'blur'}
         ],
         goods_number: [
           {required: true, message: '请输入商品数量', trigger: 'blur'},
+          {validator: checkNumber, trigger: 'blur'}
         ],
         goods_cat: [
           {required: true, message: '请选择商品分类', trigger: 'blur'},
@@ -211,8 +227,16 @@ export default {
     handleTabClick() {
       if (this.activeStep === '1') {
         this.getGoodsManyParams()
+        this.isEnterStep1 = true
       } else if (this.activeStep === '2') {
+        this.isEnterStep2 = this
         this.getGoodsOnlyAttrs()
+      } else if (this.activeStep === '4') {
+        //进入商品内容TAB，如果之前没有点击过商品参数和商品属性，需要拉取一下参数，不然提交的时候，这两个表单项是空的
+        if (!(this.isEnterStep1 && this.isEnterStep2)) {
+          this.getGoodsManyParams()
+          this.getGoodsOnlyAttrs()
+        }
       }
     },
     handlePicPreview(file) {
@@ -238,6 +262,46 @@ export default {
         }
         this.addGoodsForm.pics.push(picInfo)
       }
+    },
+    /**
+     * 添加商品
+     */
+    addGoods() {
+      this.$refs.addGoodsFormRef.validate(async valid => {
+        if (valid) {
+          //先深拷贝addGoodsForm，避免影响原有界面数据
+          const addGoodsFormClone = _.cloneDeep(this.addGoodsForm)
+          //拼接分类列表
+          addGoodsFormClone.goods_cat = addGoodsFormClone.goods_cat.join(',')
+          //拼接动态参数
+          const attrs = []
+          this.manyParamList.forEach(item => {
+            const attr = {
+              attr_id: item.attr_id,
+              attr_value: item.attr_vals.join(' ')
+            }
+            attrs.push(attr)
+          })
+          //拼接静态属性
+          this.onlyAttrList.forEach(item => {
+            const attr = {
+              attr_id: item.attr_id,
+              attr_value: item.attr_vals
+            }
+            attrs.push(attr)
+          })
+          addGoodsFormClone.attrs = attrs
+          const {data: response} = await this.$http.post('goods', addGoodsFormClone)
+          console.log(response)
+          if (response.meta.status !== 201) {
+            this.$message.error('添加商品失败！')
+          } else {
+            this.$message.success('添加商品成功！')
+            this.$router.push('/goods')
+          }
+          console.log(addGoodsFormClone)
+        }
+      })
     }
   },
   computed: {
