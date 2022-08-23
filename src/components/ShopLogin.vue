@@ -118,6 +118,6 @@ export default {
 
 .login_btns {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 </style>
