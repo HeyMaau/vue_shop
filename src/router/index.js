@@ -1,16 +1,22 @@
 import VueRouter from 'vue-router'
-import ShopLogin from "@/components/ShopLogin";
-import ShopHome from "@/components/ShopHome";
-import ShopWelcome from "@/components/ShopWelcome";
-import ShopUsers from "@/components/user/ShopUsers";
-import ShopRights from "@/components/power/ShopRights";
-import ShopRoles from "@/components/power/ShopRoles";
-import ShopCategory from "@/components/goods/ShopCategory";
-import ShopCategoryParams from "@/components/goods/ShopCategoryParams";
-import ShopGoodsList from "@/components/goods/ShopGoodsList";
-import ShopGoodsAdd from "@/components/goods/ShopGoodsAdd";
-import ShopOrder from "@/components/order/ShopOrder";
-import ShopReport from "@/components/report/ShopReport";
+
+const ShopLogin = () => import(/* webpackChunkName: "index" */ '@/components/ShopLogin')
+const ShopHome = () => import(/* webpackChunkName: "index" */ '@/components/ShopHome')
+const ShopWelcome = () => import(/* webpackChunkName: "index" */ '@/components/ShopWelcome')
+
+const ShopUsers = () => import(/* webpackChunkName: "user" */ '@/components/user/ShopUsers')
+
+const ShopRights = () => import(/* webpackChunkName: "power" */ '@/components/power/ShopRights')
+const ShopRoles = () => import(/* webpackChunkName: "power" */ '@/components/power/ShopRoles')
+
+const ShopCategory = () => import(/* webpackChunkName: "power" */ '@/components/goods/ShopCategory')
+const ShopCategoryParams = () => import(/* webpackChunkName: "power" */ '@/components/goods/ShopCategoryParams')
+const ShopGoodsList = () => import(/* webpackChunkName: "power" */ '@/components/goods/ShopGoodsList')
+const ShopGoodsAdd = () => import(/* webpackChunkName: "power" */ '@/components/goods/ShopGoodsAdd')
+
+const ShopOrder = () => import(/* webpackChunkName: "order" */ '@/components/order/ShopOrder')
+
+const ShopReport = () => import(/* webpackChunkName: "report" */ '@/components/report/ShopReport')
 
 const router = new VueRouter({
     routes: [
